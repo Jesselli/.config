@@ -24,7 +24,17 @@ vim.keymap.set('n', '<leader>gf', vim.lsp.buf.format)
 vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename)
 vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action)
 vim.keymap.set('n', 'gd', vim.lsp.buf.definition)
-vim.keymap.set('n', 'gr', vim.lsp.buf.references)
+vim.keymap.set("n", "gr", function()
+	local win = vim.api.nvim_get_current_win()
+	vim.lsp.buf.references(nil, {
+		on_list = function(items, title, context)
+			vim.fn.setqflist({}, " ", items)
+			vim.cmd.copen()
+			vim.api.nvim_set_current_win(win)
+		end,
+	})
+end)
+
 
 -- Keybinds (plugins)
 vim.keymap.set('n', '<leader>sf', ":Pick files<CR>")
@@ -70,6 +80,8 @@ vim.lsp.config("lua_ls", {
 })
 
 vim.cmd("colorscheme yugen")
+vim.cmd("hi CursorLine guibg=#222222")
+vim.cmd("hi StatusLine guifg=#484848 guibg=NONE")
 
 vim.api.nvim_create_autocmd("TextYankPost", {
 	callback = function()
